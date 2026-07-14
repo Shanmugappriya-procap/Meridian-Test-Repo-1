@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "commonjs",
+    "lib": ["ESNext", "DOM"],
+    "strict": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "outDir": "./dist",
+    "rootDir": "."
+  },
+  "include": ["tests/**/*", "specs/**/*", "utils/**/*", "setup/**/*"],
+  "exclude": ["node_modules", "dist", "playwright-report", "test-results"]
+}

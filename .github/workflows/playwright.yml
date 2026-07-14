@@ -1,0 +1,134 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    - cron: '0 9 * * 1-5'          # Every weekday at 9AM UTC
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: 'Browser to run tests on'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - chromium
+          - firefox
+          - webkit
+
+jobs:
+  # ── Step 1: Decide which browsers to run ──────────────────────────────────
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      browsers: ${{ steps.set-browsers.outputs.browsers }}
+    steps:
+      - name: Set browser matrix
+        id: set-browsers
+        run: |
+          INPUT="${{ github.event.inputs.browser }}"
+          if [ "$INPUT" = "all" ] || [ -z "$INPUT" ]; then
+            echo 'browsers=["chromium","firefox","webkit"]' >> $GITHUB_OUTPUT
+          else
+            echo "browsers=[\"$INPUT\"]" >> $GITHUB_OUTPUT
+          fi
+
+  # ── Step 2: Run tests ──────────────────────────────────────────────────────
+  test:
+    name: Tests (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    needs: setup                    # ✅ Wait for setup job to finish
+    timeout-minutes: 60
+
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: ${{ fromJson(needs.setup.outputs.browsers) }}
+
+    steps:
+      # ── Checkout ────────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Node.js ─────────────────────────────────────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # ── Install npm dependencies ─────────────────────────────────────────────
+      - name: Install dependencies
+        run: npm ci
+
+      # ── Cache Playwright browsers ────────────────────────────────────────────
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
+
+      # ── Install browsers ─────────────────────────────────────────────────────
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Install system dependencies only (cache hit)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps ${{ matrix.browser }}
+
+      # ── Run tests ────────────────────────────────────────────────────────────
+      - name: Run Playwright tests (${{ matrix.browser }})
+        run: npx playwright test --project=${{ matrix.browser }}
+        env:
+          CI: true
+          JIRA_ENABLED: true                              # ✅ Activates your Jira reporter
+          BASE_URL: https://shanmugappriya-procap.github.io/haus-store/
+          JIRA_BASE_URL:     ${{ secrets.JIRA_BASE_URL }}
+          JIRA_EMAIL:        ${{ secrets.JIRA_EMAIL }}
+          JIRA_API_TOKEN:    ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_PROJECT_KEY:  ${{ secrets.JIRA_PROJECT_KEY }}
+          JIRA_ISSUE_TYPE:   ${{ secrets.JIRA_ISSUE_TYPE }}
+          JIRA_ASSIGNEE_ID:  ${{ secrets.JIRA_ASSIGNEE_ID }}
+          JIRA_REPORTER_ID:  ${{ secrets.JIRA_REPORTER_ID }}
+
+      # ── Upload HTML report ───────────────────────────────────────────────────
+      - name: Upload Playwright HTML report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: playwright-report/
+          retention-days: 30
+
+      # ── Upload test results (only on failure) ────────────────────────────────
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-results-${{ matrix.browser }}
+          path: test-results/
+          retention-days: 7
+
+  # ── Step 3: Summary after all browsers complete ───────────────────────────
+  report:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: test
+    if: always()                    # ✅ Run even if tests fail
+    steps:
+      - name: Check test results
+        run: |
+          if [ "${{ needs.test.result }}" = "success" ]; then
+            echo "✅ All tests passed!"
+          else
+            echo "❌ Some tests failed. Check artifacts for reports."
+            exit 1
+          fi

@@ -1,0 +1,22 @@
+{
+    "CheckoutDetails": {
+        "ContactInfo": {
+            "email": "user@haus.com",
+            "phone": "+911234567890",
+            "firstName": "Walter",
+            "lastName": "White",
+            "fullName": "Walter White",
+            "address": "308 Negra Arroyo Lane",
+            "city": "Albuquerque",
+            "state": "New Mexico",
+            "zip": "87104",
+            "country": "United States"
+        },
+        "PaymentInfo": {
+            "cardNumber": "1234 5678 9012 3456",
+            "expiry": "12/30",
+            "cvv": "123",
+            "nameOnCard": "Walter White"
+        }
+    }
+}

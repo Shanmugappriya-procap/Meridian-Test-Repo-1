@@ -1,0 +1,26 @@
+{
+  "name": "ai-playwright-framework",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:e2e": "playwright test spec/e2e.spec.ts",
+    "test:ci": "BASE_URL=https://shanmugappriya-procap.github.io/haus-store/ playwright test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.5.0",
+    "axios": "^1.13.6",
+    "dotenv": "^17.3.1",
+    "playwright": "^1.58.2"
+  },
+  "dependencies": {
+    "allure-playwright": "^3.6.0",
+    "jira-client": "^8.2.2"
+  }
+}

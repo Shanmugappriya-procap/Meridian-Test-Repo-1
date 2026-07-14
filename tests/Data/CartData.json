@@ -1,0 +1,47 @@
+{
+    "cartProducts": {
+        "multipleAdd": {
+            "expectedCartCount": "3",
+            "products": [
+                { "index": 1, "name": "Merino Turtleneck",  "testId": "quick-add-2", "price": 96  },
+                { "index": 2, "name": "Leather Crossbody",  "testId": "quick-add-3", "price": 245 },
+                { "index": 3, "name": "Ceramic Mug Set",    "testId": "quick-add-4", "price": 64  }
+            ],
+            "pricing": {
+                "subtotal":          405.00,
+                "taxRate":           0.08,
+                "tax":               32.40,
+                "shipping":          0.00,
+                "total":             437.40,
+                "formattedSubtotal": "$405.00",
+                "formattedTax":      "$32.40",
+                "formattedShipping": "Free",
+                "formattedTotal":    "$437.40"
+            }
+        },
+        "promoCodes": {
+            "HAUS20": {
+                "code":               "HAUS20",
+                "discountRate":       0.20,
+                "discountAmount":     81.00,
+                "discountedSubtotal": 324.00,
+                "tax":                25.92,
+                "total":              349.92,
+                "formattedTotal":     "$437.40",
+                "expectedToast":      "Promo code applied: 20% off!"
+            },
+            "FREESHIP": {
+                "code":               "FREESHIP",
+                "shippingAfter":      0.00,
+                "formattedShipping":  "Free",
+                "total":              437.40,
+                "formattedTotal":     "$437.40",
+                "expectedToast":      "Free shipping applied!"
+            },
+            "INVALID": {
+                "code":               "FAKECODE",
+                "expectedToast":      "Invalid promo code"
+            }
+        }
+    }
+}

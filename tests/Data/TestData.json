@@ -1,0 +1,503 @@
+{
+  "users": {
+    "validUser": {
+      "email": "user@haus.com",
+      "password": "password123",
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "fullName": "Jane Smith"
+    },
+    "invalidUser": {
+      "email": "invalid@haus.com",
+      "password": "wrongpassword"
+    }
+  },
+  "toastMessages": {
+    "addToCart": "added to cart",
+    "loginSuccess": "Welcome back, Jane!",
+    "logout": "You have been signed out.",
+    "registerSuccess": "Welcome to HAUS",
+    "promoValid": "Promo code applied: 20% off!",
+    "promoFreeShip": "Free shipping applied!",
+    "promoInvalid": "Invalid promo code",
+    "wishlistAdded": "saved to wishlist",
+    "wishlistRemoved": "removed from wishlist",
+    "accountSaved": "Account updated successfully!",
+    "invalidLogin": "Invalid email or password."
+  },
+  "filters": {
+    "all": {
+      "testId": "filter-all",
+      "label": "All",
+      "expectedCount": 8,
+      "expectedCountText": "Showing 1–8 of 16 products"
+    },
+    "clothing": {
+      "testId": "filter-clothing",
+      "label": "Clothing",
+      "expectedCount": 5,
+      "expectedCountText": "Showing 1–5 of 5 products",
+      "expectedProducts": [
+        "Linen Overshirt",
+        "Merino Turtleneck",
+        "Tailored Trousers",
+        "Suede Chelsea Boot",
+        "Wide Leg Jeans"
+      ],
+      "shouldNotContain": [
+        "Leather Crossbody",
+        "Ceramic Mug Set",
+        "Vitamin C Serum"
+      ]
+    },
+    "accessories": {
+      "testId": "filter-accessories",
+      "label": "Accessories",
+      "expectedCount": 4,
+      "expectedCountText": "Showing 1–4 of 4 products",
+      "expectedProducts": [
+        "Leather Crossbody",
+        "Brass Card Holder",
+        "Silk Scarf",
+        "Cashmere Beanie"
+      ],
+      "shouldNotContain": [
+        "Linen Overshirt",
+        "Soy Candle",
+        "Vitamin C Serum"
+      ]
+    },
+    "home": {
+      "testId": "filter-home",
+      "label": "Home",
+      "expectedCount": 6,
+      "expectedCountText": "Showing 1–6 of 6 products",
+      "expectedProducts": [
+        "Ceramic Mug Set",
+        "Linen Throw",
+        "Soy Candle",
+        "Walnut Tray"
+      ],
+      "shouldNotContain": [
+        "Linen Overshirt",
+        "Leather Crossbody",
+        "Vitamin C Serum"
+      ]
+    },
+    "beauty": {
+      "testId": "filter-beauty",
+      "label": "Beauty",
+      "expectedCount": 4,
+      "expectedCountText": "Showing 1–4 of 4 products",
+      "expectedProducts": [
+        "Vitamin C Serum",
+        "Retinol Moisturiser",
+        "Niacinamide Toner"
+      ],
+      "shouldNotContain": [
+        "Linen Overshirt",
+        "Ceramic Mug Set",
+        "Leather Crossbody"
+      ]
+    },
+    "pagination": {
+      "defaultItemsPerPage": 8,
+      "totalProducts": 24,
+      "totalPages": 3,
+      "page1": {
+        "expectedCountText": "Showing 1–8 of 24 products",
+        "expectedPageInfo": "1–8 of 24 products"
+      },
+      "page2": {
+        "expectedCountText": "Showing 9–16 of 24 products",
+        "expectedPageInfo": "9–16 of 24 products"
+      },
+      "page3": {
+        "expectedCountText": "Showing 17–24 of 24 products",
+        "expectedPageInfo": "17–24 of 24 products"
+      },
+      "perPageOptions": [
+        8,
+        12,
+        16,
+        24
+      ],
+      "perPage12": {
+        "itemsPerPage": 12,
+        "totalPages": 2,
+        "page1CountText": "Showing 1–12 of 24 products"
+      }
+    },
+    "search": {
+      "validQueries": [
+        {
+          "query": "linen",
+          "expectedMinResults": 2,
+          "expectedProducts": [
+            "Linen Overshirt",
+            "Linen Throw"
+          ]
+        },
+        {
+          "query": "beauty",
+          "expectedMinResults": 4
+        },
+        {
+          "query": "candle",
+          "expectedMinResults": 1,
+          "expectedProducts": [
+            "Soy Candle"
+          ]
+        },
+        {
+          "query": "clothing",
+          "expectedMinResults": 8
+        },
+        {
+          "query": "scarf",
+          "expectedMinResults": 1,
+          "expectedProducts": [
+            "Silk Scarf"
+          ]
+        },
+        {
+          "query": "serum",
+          "expectedMinResults": 1,
+          "expectedProducts": [
+            "Vitamin C Serum"
+          ]
+        }
+      ],
+      "noResultQuery": {
+        "query": "xyznotaproduct123",
+        "expectedResults": 0,
+        "expectedNoResultsText": "No products found"
+      },
+      "partialQuery": {
+        "query": "mer",
+        "expectedMinResults": 1,
+        "expectedProduct": "Merino Turtleneck"
+      },
+      "caseInsensitive": {
+        "query": "LINEN",
+        "expectedMinResults": 3
+      }
+    },
+    "products": {
+      "clothing": [
+        {
+          "id": 1,
+          "name": "Linen Overshirt",
+          "price": 128,
+          "badge": null,
+          "sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "defaultSize": "M",
+          "defaultColor": "Natural"
+        },
+        {
+          "id": 2,
+          "name": "Merino Turtleneck",
+          "price": 96,
+          "oldPrice": 140,
+          "badge": "sale",
+          "sizes": [
+            "S",
+            "M",
+            "L",
+            "XL"
+          ],
+          "defaultSize": "M",
+          "defaultColor": "Cream"
+        },
+        {
+          "id": 5,
+          "name": "Tailored Trousers",
+          "price": 158,
+          "oldPrice": 210,
+          "badge": "sale",
+          "sizes": [
+            "28",
+            "30",
+            "32",
+            "34",
+            "36"
+          ],
+          "defaultSize": "32",
+          "defaultColor": "Charcoal"
+        },
+        {
+          "id": 8,
+          "name": "Suede Chelsea Boot",
+          "price": 285,
+          "badge": null,
+          "sizes": [
+            "36",
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42"
+          ],
+          "defaultSize": "39",
+          "defaultColor": "Tan"
+        },
+        {
+          "id": 13,
+          "name": "Wide Leg Jeans",
+          "price": 135,
+          "badge": null,
+          "sizes": [
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30"
+          ],
+          "defaultSize": "27",
+          "defaultColor": "Mid Wash"
+        },
+        {
+          "id": 17,
+          "name": "Relaxed Blazer",
+          "price": 245,
+          "badge": "new",
+          "sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL"
+          ],
+          "defaultSize": "M",
+          "defaultColor": "Ecru"
+        },
+        {
+          "id": 18,
+          "name": "Ribbed Tank Top",
+          "price": 48,
+          "badge": null,
+          "sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL"
+          ],
+          "defaultSize": "M",
+          "defaultColor": "White"
+        },
+        {
+          "id": 22,
+          "name": "Knit Cardigan",
+          "price": 168,
+          "oldPrice": 220,
+          "badge": "sale",
+          "sizes": [
+            "One Size"
+          ],
+          "defaultSize": "One Size",
+          "defaultColor": "Oatmeal"
+        }
+      ],
+      "accessories": [
+        {
+          "id": 3,
+          "name": "Leather Crossbody",
+          "price": 245,
+          "badge": "new",
+          "sizes": [
+            "One Size"
+          ],
+          "defaultSize": "One Size",
+          "defaultColor": "Tan"
+        },
+        {
+          "id": 9,
+          "name": "Brass Card Holder",
+          "price": 38,
+          "badge": null,
+          "sizes": [
+            "One Size"
+          ],
+          "defaultSize": "One Size",
+          "defaultColor": "Brass"
+        },
+        {
+          "id": 12,
+          "name": "Silk Scarf",
+          "price": 115,
+          "badge": "new",
+          "sizes": [
+            "90×90cm"
+          ],
+          "defaultSize": "90×90cm",
+          "defaultColor": "Ivory/Forest"
+        },
+        {
+          "id": 15,
+          "name": "Cashmere Beanie",
+          "price": 72,
+          "badge": null,
+          "sizes": [
+            "One Size"
+          ],
+          "defaultSize": "One Size",
+          "defaultColor": "Oat"
+        },
+        {
+          "id": 19,
+          "name": "Leather Belt",
+          "price": 85,
+          "badge": null,
+          "sizes": [
+            "S",
+            "M",
+            "L",
+            "XL"
+          ],
+          "defaultSize": "M",
+          "defaultColor": "Tan"
+        },
+        {
+          "id": 24,
+          "name": "Sunglasses",
+          "price": 125,
+          "badge": "new",
+          "sizes": [
+            "One Size"
+          ],
+          "defaultSize": "One Size",
+          "defaultColor": "Tortoise"
+        }
+      ],
+      "home": [
+        {
+          "id": 4,
+          "name": "Ceramic Mug Set",
+          "price": 64,
+          "badge": null,
+          "sizes": [
+            "Set of 2"
+          ],
+          "defaultSize": "Set of 2",
+          "defaultColor": "White/Blue"
+        },
+        {
+          "id": 6,
+          "name": "Linen Throw",
+          "price": 89,
+          "badge": null,
+          "sizes": [
+            "140×200cm"
+          ],
+          "defaultSize": "140×200cm",
+          "defaultColor": "Natural"
+        },
+        {
+          "id": 10,
+          "name": "Soy Candle",
+          "price": 44,
+          "badge": null,
+          "sizes": [
+            "250g"
+          ],
+          "defaultSize": "250g",
+          "defaultColor": "Natural"
+        },
+        {
+          "id": 16,
+          "name": "Walnut Tray",
+          "price": 58,
+          "oldPrice": 70,
+          "badge": "sale",
+          "sizes": [
+            "40×25cm"
+          ],
+          "defaultSize": "40×25cm",
+          "defaultColor": "Natural Walnut"
+        },
+        {
+          "id": 20,
+          "name": "Linen Duvet Cover",
+          "price": 148,
+          "oldPrice": 190,
+          "badge": "sale",
+          "sizes": [
+            "Queen",
+            "King"
+          ],
+          "defaultSize": "Queen",
+          "defaultColor": "White"
+        },
+        {
+          "id": 23,
+          "name": "Marble Coaster Set",
+          "price": 52,
+          "badge": null,
+          "sizes": [
+            "Set of 4"
+          ],
+          "defaultSize": "Set of 4",
+          "defaultColor": "White/Grey"
+        }
+      ],
+      "beauty": [
+        {
+          "id": 7,
+          "name": "Vitamin C Serum",
+          "price": 52,
+          "badge": "new",
+          "sizes": [
+            "30ml"
+          ],
+          "defaultSize": "30ml",
+          "defaultColor": null
+        },
+        {
+          "id": 11,
+          "name": "Retinol Moisturiser",
+          "price": 78,
+          "oldPrice": 95,
+          "badge": "sale",
+          "sizes": [
+            "50ml"
+          ],
+          "defaultSize": "50ml",
+          "defaultColor": null
+        },
+        {
+          "id": 14,
+          "name": "Niacinamide Toner",
+          "price": 35,
+          "badge": null,
+          "sizes": [
+            "150ml"
+          ],
+          "defaultSize": "150ml",
+          "defaultColor": null
+        },
+        {
+          "id": 21,
+          "name": "Face Oil",
+          "price": 68,
+          "badge": "new",
+          "sizes": [
+            "30ml"
+          ],
+          "defaultSize": "30ml",
+          "defaultColor": null
+        }
+      ]
+    }
+  }
+}
