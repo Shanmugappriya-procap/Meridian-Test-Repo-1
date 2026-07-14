@@ -1,247 +1,302 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as https from 'https';
-import { jiraConfig } from '../config/jira.config';
+import axios from "axios";
+import * as fs from "fs";
+import * as path from "path";
+import * as dotenv from "dotenv";
+import type { Reporter, TestCase, TestResult, FullResult } from "@playwright/test/reporter";
 
-export interface JiraBugPayload {
-  testSuiteName: string;
-  failedTest: string;
-  friendlyError: string;
-  actualError: string;
-  failedLine: string;
-  locatorInfo: string;
+dotenv.config({ override: true });
+
+// ── Strip ANSI terminal color codes ──────────────────────────────────────────
+const stripAnsi = (str: string): string =>
+  str.replace(/\u001b\[[0-9;]*m/g, "").replace(/\[[\d]+m/g, "").trim();
+
+// ── Extract custom assertion message from Playwright error ───────────────────
+// Playwright prepends the custom message like:
+//   "The status label was not visible\n\nLocator: ..."
+const extractCustomMessage = (rawError: string): string | undefined => {
+  const cleaned = stripAnsi(rawError);
+
+  const match = cleaned.match(/^([\s\S]+?)\n\n(?:Locator|Expect|Error|Call log)/m);
+  if (match) {
+    const candidate = match[1].trim();
+    if (
+      candidate.startsWith("expect(") ||
+      candidate.startsWith("Error:") ||
+      candidate.length === 0
+    ) {
+      return undefined;
+    }
+    return candidate;
+  }
+  return undefined;
+};
+
+interface JiraBugPayload {
+  testName: string;
+  errorMessage: string;
+  stackTrace?: string;
+  suiteName?: string;
   screenshotPath?: string;
   tracePath?: string;
-  browser: string;
-  duration: number;
+  errorContextPath?: string;
+  testLogs?: string[];
+  failedLine?: string;
+  filePath?: string;
+  customMessage?: string;
 }
 
-export class JiraClient {
-  private readonly authHeader: string;
-  private readonly apiBase: string;
-  private readonly baseUrl: string;
+class JiraReporter implements Reporter {
+  private baseUrl = process.env.JIRA_BASE_URL!;
+  private email = process.env.JIRA_EMAIL!;
+  private apiToken = process.env.JIRA_API_TOKEN!;
+  private projectKey = process.env.JIRA_PROJECT_KEY!;
+  private issueType = process.env.JIRA_ISSUE_TYPE || "Bug";
+  private assigneeId = process.env.JIRA_ASSIGNEE_ID;
+  private reporterId = process.env.JIRA_REPORTER_ID;
 
-  constructor() {
-    const credentials = Buffer.from(
-      `${jiraConfig.email}:${jiraConfig.apiToken}`
-    ).toString('base64');
-    this.authHeader = `Basic ${credentials}`;
-    this.baseUrl = jiraConfig.baseUrl;
-    this.apiBase = `${jiraConfig.baseUrl}/rest/api/3`;
-  }
+  // ── Playwright Reporter lifecycle hook ────────────────────────────────────
+  // Called automatically by Playwright after each test finishes.
+  async onTestEnd(test: TestCase, result: TestResult): Promise<void> {
+    if (result.status !== "failed" && result.status !== "timedOut") {
+      return;
+    }
 
-  // ─── Core HTTP request using Node.js https module ──────────
-  private httpsRequest(
-    urlStr: string,
-    method: string,
-    headers: Record<string, string>,
-    body?: string
-  ): Promise<{ status: number; body: string }> {
-    return new Promise((resolve, reject) => {
-      const url = new URL(urlStr);
-      const options = {
-        hostname: url.hostname,
-        path: url.pathname + url.search,
-        method,
-        headers: {
-          ...headers,
-          ...(body ? { 'Content-Length': Buffer.byteLength(body) } : {}),
-        },
-      };
+    const testName = test.titlePath().slice(1).join(" › ");
+    const suiteName = test.parent?.title;
+    const errorMessage = result.errors.map(e => e.message || "").join("\n\n") || "Unknown error";
+    const stackTrace = result.errors.map(e => e.stack || "").filter(Boolean).join("\n\n");
+    const testLogs = result.stdout.map(s => s.toString());
 
-      const req = https.request(options, (res) => {
-        let data = '';
-        res.on('data', (chunk) => (data += chunk));
-        res.on('end', () => resolve({ status: res.statusCode || 0, body: data }));
-      });
+    const screenshotPath = result.attachments.find(a => a.name === "screenshot")?.path;
+    const tracePath = result.attachments.find(a => a.name === "trace")?.path;
+    const errorContextPath = result.attachments.find(a => a.name === "error-context")?.path;
 
-      req.on('error', reject);
-      if (body) req.write(body);
-      req.end();
+    const filePath = `${test.location.file}:${test.location.line}`;
+
+    // Avoid duplicate bugs for the same test on repeated CI runs
+    const alreadyExists = await this.bugExists(testName);
+    if (alreadyExists) {
+      console.log(`ℹ️  Jira bug already exists for "${testName}", skipping.`);
+      return;
+    }
+
+    await this.createBug({
+      testName,
+      suiteName,
+      errorMessage,
+      stackTrace,
+      testLogs,
+      screenshotPath,
+      tracePath,
+      errorContextPath,
+      filePath,
     });
   }
 
-  // ─── Create a bug issue in Jira ────────────────────────────
-  async createBug(payload: JiraBugPayload): Promise<string | null> {
-    const description = this.buildDescription(payload);
+  async onEnd(result: FullResult): Promise<void> {
+    console.log(`Jira reporter finished. Overall status: ${result.status}`);
+  }
 
-    // Strip ANSI color codes from error text before sending to Jira
-    const cleanError = payload.actualError.replace(/\u001b\[[0-9;]*m/g, '');
-    const cleanFriendly = payload.friendlyError.replace(/\u001b\[[0-9;]*m/g, '');
-    const cleanLocator = payload.locatorInfo.replace(/\u001b\[[0-9;]*m/g, '');
+  // ── Auth ───────────────────────────────────────────────────────────────────
+  private get authHeader() {
+    const encoded = Buffer.from(`${this.email}:${this.apiToken}`).toString("base64");
+    return `Basic ${encoded}`;
+  }
 
-    const body = {
-      fields: {
-        project: { key: jiraConfig.projectKey },
-        summary: `[Automation Failure] ${payload.failedTest}`,
-        description: this.buildCleanDescription({ ...payload, actualError: cleanError, friendlyError: cleanFriendly, locatorInfo: cleanLocator }),
-        issuetype: { name: jiraConfig.issueType },
-        priority: { name: jiraConfig.priority },
-        labels: jiraConfig.labels,
-        parent: { key: jiraConfig.epicKey },
-      },
+  private get requestHeaders() {
+    return {
+      Authorization: this.authHeader,
+      "Content-Type": "application/json",
     };
+  }
 
-    const bodyStr = JSON.stringify(body);
+  // ── Build ADF description ─────────────────────────────────────────────────
+  private buildDescription(payload: JiraBugPayload) {
+    const {
+      testName, suiteName, testLogs,
+      errorMessage: rawError,
+      stackTrace: rawStack,
+      failedLine: rawLine,
+      filePath,
+      customMessage,
+    } = payload;
+
+    const errorMessage = stripAnsi(rawError);
+    const stackTrace = rawStack ? stripAnsi(rawStack) : undefined;
+    const failedLine = rawLine ? stripAnsi(rawLine) : undefined;
+    const cleanLogs = testLogs?.map(stripAnsi).filter(Boolean);
+
+    const content: any[] = [
+      ...(customMessage ? [
+        {
+          type: "panel",
+          attrs: { panelType: "warning" },
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                { type: "text", text: "Assertion Failure: ", marks: [{ type: "strong" }] },
+                { type: "text", text: customMessage, marks: [{ type: "em" }] },
+              ],
+            },
+          ],
+        },
+      ] : []),
+      {
+        type: "paragraph",
+        content: [
+          { type: "text", text: "Test Suite: ", marks: [{ type: "strong" }] },
+          { type: "text", text: suiteName || "N/A" },
+        ],
+      },
+      {
+        type: "paragraph",
+        content: [
+          { type: "text", text: "Failed Test: ", marks: [{ type: "strong" }] },
+          { type: "text", text: testName },
+        ],
+      },
+      ...(filePath ? [{
+        type: "paragraph",
+        content: [
+          { type: "text", text: "Test File: ", marks: [{ type: "strong" }] },
+          { type: "text", text: filePath },
+        ],
+      }] : []),
+      {
+        type: "paragraph",
+        content: [
+          { type: "text", text: "Error Message: ", marks: [{ type: "strong" }] },
+          { type: "text", text: errorMessage },
+        ],
+      },
+      ...(failedLine ? [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Failed at Line:", marks: [{ type: "strong" }] }],
+        },
+        {
+          type: "codeBlock",
+          content: [{ type: "text", text: failedLine }],
+        },
+      ] : []),
+      ...(stackTrace ? [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Stack Trace:", marks: [{ type: "strong" }] }],
+        },
+        {
+          type: "codeBlock",
+          content: [{ type: "text", text: stackTrace }],
+        },
+      ] : []),
+      ...(cleanLogs && cleanLogs.length > 0 ? [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Test Run Logs:", marks: [{ type: "strong" }] }],
+        },
+        {
+          type: "codeBlock",
+          content: [{ type: "text", text: cleanLogs.join("\n") }],
+        },
+      ] : []),
+    ];
+
+    return { type: "doc", version: 1, content };
+  }
+
+  private buildSummary(payload: JiraBugPayload): string {
+    const testName = stripAnsi(payload.testName);
+    const customMessage = payload.customMessage;
+
+    if (customMessage) {
+      return `[Automated Bug] ${customMessage} | ${testName}`;
+    }
+    return `[Automated Bug] ${testName}`;
+  }
+
+  // ── Create Bug ────────────────────────────────────────────────────────────
+  async createBug(payload: JiraBugPayload): Promise<string | null> {
+    if (!payload.customMessage && payload.errorMessage) {
+      payload.customMessage = extractCustomMessage(payload.errorMessage);
+    }
 
     try {
-      console.log(`[JiraReporter] 🔄 Calling: ${this.apiBase}/issue`);
-      console.log(`[JiraReporter] 📦 Config: project=${jiraConfig.projectKey} | epic=${jiraConfig.epicKey} | email=${jiraConfig.email}`);
+      const fields: any = {
+        project: { key: this.projectKey },
+        summary: this.buildSummary(payload),
+        description: this.buildDescription(payload),
+        issuetype: { name: this.issueType },
+        labels: ["automation", "playwright"],
+        parent: { key: "PC-71" },
+      };
 
-      const response = await this.httpsRequest(
-        `${this.apiBase}/issue`,
-        'POST',
-        {
-          'Authorization': this.authHeader,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        bodyStr
+      if (this.assigneeId) fields.assignee = { accountId: this.assigneeId };
+      if (this.reporterId) fields.reporter = { accountId: this.reporterId };
+
+      const response = await axios.post(
+        `${this.baseUrl}/rest/api/3/issue`,
+        { fields },
+        { headers: this.requestHeaders }
       );
 
-      console.log(`[JiraReporter] 📡 Response Status: ${response.status}`);
-      console.log(`[JiraReporter] 📡 Response Body: ${response.body}`);
+      const issueKey: string = response.data.key;
+      console.log(`✅ Jira bug created: ${this.baseUrl}/browse/${issueKey}`);
 
-      if (response.status < 200 || response.status >= 300) {
-        console.error(`[JiraReporter] ❌ Failed: HTTP ${response.status} - ${response.body}`);
-        return null;
+      if (payload.screenshotPath && fs.existsSync(payload.screenshotPath)) {
+        await this.attachFile(issueKey, payload.screenshotPath);
+      }
+      if (payload.tracePath && fs.existsSync(payload.tracePath)) {
+        await this.attachFile(issueKey, payload.tracePath);
+      }
+      if (payload.errorContextPath && fs.existsSync(payload.errorContextPath)) {
+        await this.attachFile(issueKey, payload.errorContextPath);
       }
 
-      const data = JSON.parse(response.body) as { key: string };
-      console.log(`[JiraReporter] ✅ Bug created: ${this.baseUrl}/browse/${data.key}`);
-      return data.key;
-    } catch (err) {
-      console.error('[JiraReporter] ❌ Network error calling Jira API:', err);
+      return issueKey;
+    } catch (error: any) {
+      console.error("❌ Failed to create Jira bug:", error.response?.data || error.message);
       return null;
     }
   }
 
-  // ─── Attach a file to a Jira issue ─────────────────────────
-  async attachFile(issueKey: string, filePath: string): Promise<void> {
-    if (!fs.existsSync(filePath)) {
-      console.warn(`[JiraReporter] File not found, skipping: ${filePath}`);
-      return;
-    }
-
-    const fileName = path.basename(filePath);
-    const fileContent = fs.readFileSync(filePath);
-    const boundary = `----FormBoundary${Date.now()}`;
-
-    const header = Buffer.from(
-      `--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="${fileName}"\r\nContent-Type: application/octet-stream\r\n\r\n`
-    );
-    const footer = Buffer.from(`\r\n--${boundary}--\r\n`);
-    const bodyBuffer = Buffer.concat([header, fileContent, footer]);
+  // ── Attach any file ───────────────────────────────────────────────────────
+  private async attachFile(issueKey: string, filePath: string): Promise<void> {
+    const FormData = require("form-data");
+    const form = new FormData();
+    form.append("file", fs.createReadStream(filePath), path.basename(filePath));
 
     try {
-      const url = new URL(`${this.apiBase}/issue/${issueKey}/attachments`);
-      const response = await new Promise<{ status: number; body: string }>((resolve, reject) => {
-        const options = {
-          hostname: url.hostname,
-          path: url.pathname,
-          method: 'POST',
+      await axios.post(
+        `${this.baseUrl}/rest/api/3/issue/${issueKey}/attachments`,
+        form,
+        {
           headers: {
-            'Authorization': this.authHeader,
-            'X-Atlassian-Token': 'no-check',
-            'Content-Type': `multipart/form-data; boundary=${boundary}`,
-            'Content-Length': bodyBuffer.length,
+            Authorization: this.authHeader,
+            "X-Atlassian-Token": "no-check",
+            ...form.getHeaders(),
           },
-        };
-
-        const req = https.request(options, (res) => {
-          let data = '';
-          res.on('data', (chunk) => (data += chunk));
-          res.on('end', () => resolve({ status: res.statusCode || 0, body: data }));
-        });
-
-        req.on('error', reject);
-        req.write(bodyBuffer);
-        req.end();
-      });
-
-      if (response.status < 200 || response.status >= 300) {
-        console.error(`[JiraReporter] Failed to attach ${fileName}: ${response.status} - ${response.body}`);
-      } else {
-        console.log(`[JiraReporter] 📎 Attached: ${fileName} to ${issueKey}`);
-      }
-    } catch (err) {
-      console.error(`[JiraReporter] Error attaching ${fileName}:`, err);
+        }
+      );
+      console.log(`✅ Attached: ${path.basename(filePath)} → ${issueKey}`);
+    } catch (error: any) {
+      console.error(`❌ Failed to attach ${path.basename(filePath)}:`, error.response?.data || error.message);
     }
   }
 
-  // ─── Build description with clean text ─────────────────────
-  private buildCleanDescription(payload: JiraBugPayload): object {
-    return {
-      type: 'doc',
-      version: 1,
-      content: [
-        this.heading('🚨 Test Failure Report'),
-        this.heading('📋 Test Information', 3),
-        this.infoTable([
-          ['Test Suite', payload.testSuiteName],
-          ['Failed Test', payload.failedTest],
-          ['Browser', payload.browser],
-          ['Duration', `${(payload.duration / 1000).toFixed(2)}s`],
-        ]),
-        this.heading('🔴 What Went Wrong (Simple Explanation)', 3),
-        this.paragraph(payload.friendlyError),
-        this.heading('🛠️ Technical Error Details', 3),
-        this.codeBlock(payload.actualError),
-        ...(payload.failedLine ? [
-          this.heading('📍 Failed at Line', 3),
-          this.codeBlock(payload.failedLine),
-        ] : []),
-        ...(payload.locatorInfo ? [
-          this.heading('🔍 Locator / Element Info', 3),
-          this.codeBlock(payload.locatorInfo),
-        ] : []),
-        this.heading('📎 Attachments', 3),
-        this.paragraph('Screenshot and trace files are attached to this issue.\nOpen the trace at: https://trace.playwright.dev'),
-        this.heading('🔧 Steps to Reproduce', 3),
-        this.paragraph(
-          '1. Run the Playwright test suite\n' +
-          `2. Execute test: "${payload.failedTest}"\n` +
-          '3. Observe failure as described above'
-        ),
-      ],
-    };
-  }
-
-  private buildDescription(payload: JiraBugPayload): object {
-    return this.buildCleanDescription(payload);
-  }
-
-  private heading(text: string, level = 2): object {
-    return { type: 'heading', attrs: { level }, content: [{ type: 'text', text }] };
-  }
-
-  private paragraph(text: string): object {
-    return { type: 'paragraph', content: [{ type: 'text', text }] };
-  }
-
-  private codeBlock(code: string): object {
-    return { type: 'codeBlock', attrs: { language: 'text' }, content: [{ type: 'text', text: code || 'N/A' }] };
-  }
-
-  private infoTable(rows: [string, string][]): object {
-    return {
-      type: 'table',
-      attrs: { isNumberColumnEnabled: false, layout: 'default' },
-      content: rows.map(([label, value]) => ({
-        type: 'tableRow',
-        content: [
-          {
-            type: 'tableHeader',
-            attrs: {},
-            content: [{ type: 'paragraph', content: [{ type: 'text', text: label, marks: [{ type: 'strong' }] }] }],
-          },
-          {
-            type: 'tableCell',
-            attrs: {},
-            content: [{ type: 'paragraph', content: [{ type: 'text', text: value }] }],
-          },
-        ],
-      })),
-    };
+  // ── Check duplicate ───────────────────────────────────────────────────────
+  async bugExists(testName: string): Promise<boolean> {
+    const jql = `project = ${this.projectKey} AND summary ~ "[Automated Bug] ${testName}" AND statusCategory != Done`;
+    try {
+      const response = await axios.get(`${this.baseUrl}/rest/api/3/search`, {
+        params: { jql, maxResults: 1 },
+        headers: this.requestHeaders,
+      });
+      return response.data.total > 0;
+    } catch {
+      return false;
+    }
   }
 }
+
+export default JiraReporter;
