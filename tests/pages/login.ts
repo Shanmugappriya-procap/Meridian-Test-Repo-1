@@ -1,5 +1,13 @@
 import { expect, Page } from '@playwright/test';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import data from '../data/test-data.json';
+
+const authState = path.resolve('playwright/.auth/user.json');
+if (!fs.existsSync(authState)) {
+  fs.mkdirSync(path.dirname(authState), { recursive: true });
+  fs.writeFileSync(authState, JSON.stringify({ cookies: [], origins: [] }));
+}
 
 export class Login {
   constructor(private readonly page: Page) {}
