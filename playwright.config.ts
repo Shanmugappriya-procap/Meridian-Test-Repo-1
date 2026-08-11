@@ -6,6 +6,7 @@ export default defineConfig({
   timeout: 30000,
   use: {
     baseURL: 'https://shanmugappriya-procap.github.io/haus-store/',
+    storageState: 'playwright/.auth/user.json',
     video: 'on',
     trace: 'on',
     screenshot: 'on',
