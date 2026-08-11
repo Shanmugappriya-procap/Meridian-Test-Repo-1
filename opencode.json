@@ -1,0 +1,1 @@
+{"$schema": "https://opencode.ai/config.json", "permission": {"*": "allow"}, "mcp": {"browser": {"type": "local", "command": ["node", "/app/browser.mjs", "--profile", "setup", "--url", "https://shanmugappriya-procap.github.io/haus-store/"], "environment": {"RECON_EMAIL": "user@haus.com", "RECON_PASSWORD": "password123"}, "enabled": true}}}

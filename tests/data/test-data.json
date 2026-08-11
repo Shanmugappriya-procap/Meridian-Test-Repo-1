@@ -1,0 +1,24 @@
+{
+  "validUser": { "email": "user@haus.com", "password": "password123" },
+  "invalidUser": { "email": "invalid@haus.com", "password": "wrongpassword" },
+  "invalidLogin": "Invalid email or password.",
+  "logout": "You have been signed out.",
+  "search": { "query": "linen", "expectedMinResults": 2 },
+  "filters": {
+    "all": { "id": "filter-all", "count": "Showing 1–8 of 16 products" },
+    "clothing": { "id": "filter-clothing", "count": "Showing 1–5 of 5 products" },
+    "accessories": { "id": "filter-accessories", "count": "Showing 1–4 of 4 products" },
+    "home": { "id": "filter-home", "count": "Showing 1–6 of 6 products" },
+    "beauty": { "id": "filter-beauty", "count": "Showing 1–4 of 4 products" }
+  },
+  "cart": {
+    "products": ["Merino Turtleneck", "Leather Crossbody", "Ceramic Mug Set"],
+    "count": "3",
+    "subtotal": "$405.00", "shipping": "Free", "tax": "$32.40", "total": "$437.40"
+  },
+  "checkout": {
+    "email": "user@haus.com", "phone": "+911234567890", "firstName": "Walter", "lastName": "White",
+    "address": "308 Negra Arroyo Lane", "city": "Albuquerque", "zip": "87104", "country": "United States",
+    "card": "1234 5678 9012 3456", "expiry": "12/30", "cvv": "123", "name": "Walter White"
+  }
+}
