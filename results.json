@@ -75,7 +75,7 @@
       "specs": [
         {
           "title": "End to end ecommerce flow",
-          "ok": false,
+          "ok": true,
           "tags": [],
           "tests": [
             {
@@ -88,63 +88,17 @@
                 {
                   "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 5753,
-                  "error": {
-                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Objects of Desire')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Objects of Desire')\u001b[22m\n",
-                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Objects of Desire')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Objects of Desire')\u001b[22m\n\n    at Login.open (/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts:14:100)\n    at /tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/e2e.spec.ts:6:86",
-                    "location": {
-                      "file": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts",
-                      "column": 100,
-                      "line": 14
-                    },
-                    "snippet": "   at pages/login.ts:14\n\n  12 | export class Login {\n  13 |   constructor(private readonly page: Page) {}\n> 14 |   async open() { await this.page.goto('/'); await expect(this.page.getByText('Objects of Desire')).toBeVisible(); }\n     |                                                                                                    ^\n  15 |   async openLogin() { await this.page.getByRole('button', { name: 'Sign In' }).first().click(); await expect(this.page.getByText('Sign In').first()).toBeVisible(); }\n  16 |   async login() { await this.fill(data.validUser.email, data.validUser.password); await expect(this.page.locator('#profile-email')).toBeVisible(); }\n  17 |   async invalidLogin() { await this.fill(data.invalidUser.email, data.invalidUser.password); await expect(this.page.locator('#login-error')).toContainText(data.invalidLogin); }"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts",
-                        "column": 100,
-                        "line": 14
-                      },
-                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Objects of Desire')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Objects of Desire')\u001b[22m\n\n\n   at pages/login.ts:14\n\n  12 | export class Login {\n  13 |   constructor(private readonly page: Page) {}\n> 14 |   async open() { await this.page.goto('/'); await expect(this.page.getByText('Objects of Desire')).toBeVisible(); }\n     |                                                                                                    ^\n  15 |   async openLogin() { await this.page.getByRole('button', { name: 'Sign In' }).first().click(); await expect(this.page.getByText('Sign In').first()).toBeVisible(); }\n  16 |   async login() { await this.fill(data.validUser.email, data.validUser.password); await expect(this.page.locator('#profile-email')).toBeVisible(); }\n  17 |   async invalidLogin() { await this.fill(data.invalidUser.email, data.invalidUser.password); await expect(this.page.locator('#login-error')).toContainText(data.invalidLogin); }\n    at Login.open (/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts:14:100)\n    at /tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/e2e.spec.ts:6:86"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 0,
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
                   "startTime": "2026-08-11T11:25:23.960Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/test-results/e2e-End-to-end-ecommerce-flow/test-failed-1.png"
-                    },
-                    {
-                      "name": "video",
-                      "contentType": "video/webm",
-                      "path": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/test-results/e2e-End-to-end-ecommerce-flow/video.webm"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/test-results/e2e-End-to-end-ecommerce-flow/error-context.md"
-                    },
-                    {
-                      "name": "trace",
-                      "contentType": "application/zip",
-                      "path": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/test-results/e2e-End-to-end-ecommerce-flow/trace.zip"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts",
-                    "column": 100,
-                    "line": 14
-                  }
+                  "attachments": []
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "b1c7859d981cc20c96be-6051eacfef4b4ad3d57d",
@@ -153,310 +107,15 @@
           "column": 5
         }
       ]
-    },
-    {
-      "title": "filter.spec.ts",
-      "file": "filter.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [
-        {
-          "title": "Filter products by category",
-          "ok": false,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 5613,
-                  "error": {
-                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Objects of Desire')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Objects of Desire')\u001b[22m\n",
-                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Objects of Desire')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Objects of Desire')\u001b[22m\n\n    at Login.open (/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts:14:100)\n    at /tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/filter.spec.ts:5:88",
-                    "location": {
-                      "file": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts",
-                      "column": 100,
-                      "line": 14
-                    },
-                    "snippet": "   at pages/login.ts:14\n\n  12 | export class Login {\n  13 |   constructor(private readonly page: Page) {}\n> 14 |   async open() { await this.page.goto('/'); await expect(this.page.getByText('Objects of Desire')).toBeVisible(); }\n     |                                                                                                    ^\n  15 |   async openLogin() { await this.page.getByRole('button', { name: 'Sign In' }).first().click(); await expect(this.page.getByText('Sign In').first()).toBeVisible(); }\n  16 |   async login() { await this.fill(data.validUser.email, data.validUser.password); await expect(this.page.locator('#profile-email')).toBeVisible(); }\n  17 |   async invalidLogin() { await this.fill(data.invalidUser.email, data.invalidUser.password); await expect(this.page.locator('#login-error')).toContainText(data.invalidLogin); }"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts",
-                        "column": 100,
-                        "line": 14
-                      },
-                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Objects of Desire')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Objects of Desire')\u001b[22m\n\n\n   at pages/login.ts:14\n\n  12 | export class Login {\n  13 |   constructor(private readonly page: Page) {}\n> 14 |   async open() { await this.page.goto('/'); await expect(this.page.getByText('Objects of Desire')).toBeVisible(); }\n     |                                                                                                    ^\n  15 |   async openLogin() { await this.page.getByRole('button', { name: 'Sign In' }).first().click(); await expect(this.page.getByText('Sign In').first()).toBeVisible(); }\n  16 |   async login() { await this.fill(data.validUser.email, data.validUser.password); await expect(this.page.locator('#profile-email')).toBeVisible(); }\n  17 |   async invalidLogin() { await this.fill(data.invalidUser.email, data.invalidUser.password); await expect(this.page.locator('#login-error')).toContainText(data.invalidLogin); }\n    at Login.open (/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts:14:100)\n    at /tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/filter.spec.ts:5:88"
-                    }
-                  ],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-08-11T11:25:30.336Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/test-results/filter-Filter-products-by-category/test-failed-1.png"
-                    },
-                    {
-                      "name": "video",
-                      "contentType": "video/webm",
-                      "path": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/test-results/filter-Filter-products-by-category/video.webm"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/test-results/filter-Filter-products-by-category/error-context.md"
-                    },
-                    {
-                      "name": "trace",
-                      "contentType": "application/zip",
-                      "path": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/test-results/filter-Filter-products-by-category/trace.zip"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts",
-                    "column": 100,
-                    "line": 14
-                  }
-                }
-              ],
-              "status": "unexpected"
-            }
-          ],
-          "id": "ed23e33daf90fda383e3-02cddaae325826a1f2b2",
-          "file": "filter.spec.ts",
-          "line": 5,
-          "column": 5
-        }
-      ]
-    },
-    {
-      "title": "search.spec.ts",
-      "file": "search.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [
-        {
-          "title": "Perform search and check the data",
-          "ok": false,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 5629,
-                  "error": {
-                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Objects of Desire')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Objects of Desire')\u001b[22m\n",
-                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Objects of Desire')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Objects of Desire')\u001b[22m\n\n    at Login.open (/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts:14:100)\n    at /tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/search.spec.ts:5:94",
-                    "location": {
-                      "file": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts",
-                      "column": 100,
-                      "line": 14
-                    },
-                    "snippet": "   at pages/login.ts:14\n\n  12 | export class Login {\n  13 |   constructor(private readonly page: Page) {}\n> 14 |   async open() { await this.page.goto('/'); await expect(this.page.getByText('Objects of Desire')).toBeVisible(); }\n     |                                                                                                    ^\n  15 |   async openLogin() { await this.page.getByRole('button', { name: 'Sign In' }).first().click(); await expect(this.page.getByText('Sign In').first()).toBeVisible(); }\n  16 |   async login() { await this.fill(data.validUser.email, data.validUser.password); await expect(this.page.locator('#profile-email')).toBeVisible(); }\n  17 |   async invalidLogin() { await this.fill(data.invalidUser.email, data.invalidUser.password); await expect(this.page.locator('#login-error')).toContainText(data.invalidLogin); }"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts",
-                        "column": 100,
-                        "line": 14
-                      },
-                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Objects of Desire')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Objects of Desire')\u001b[22m\n\n\n   at pages/login.ts:14\n\n  12 | export class Login {\n  13 |   constructor(private readonly page: Page) {}\n> 14 |   async open() { await this.page.goto('/'); await expect(this.page.getByText('Objects of Desire')).toBeVisible(); }\n     |                                                                                                    ^\n  15 |   async openLogin() { await this.page.getByRole('button', { name: 'Sign In' }).first().click(); await expect(this.page.getByText('Sign In').first()).toBeVisible(); }\n  16 |   async login() { await this.fill(data.validUser.email, data.validUser.password); await expect(this.page.locator('#profile-email')).toBeVisible(); }\n  17 |   async invalidLogin() { await this.fill(data.invalidUser.email, data.invalidUser.password); await expect(this.page.locator('#login-error')).toContainText(data.invalidLogin); }\n    at Login.open (/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts:14:100)\n    at /tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/search.spec.ts:5:94"
-                    }
-                  ],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-08-11T11:25:36.583Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/test-results/search-Perform-search-and-check-the-data/test-failed-1.png"
-                    },
-                    {
-                      "name": "video",
-                      "contentType": "video/webm",
-                      "path": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/test-results/search-Perform-search-and-check-the-data/video.webm"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/test-results/search-Perform-search-and-check-the-data/error-context.md"
-                    },
-                    {
-                      "name": "trace",
-                      "contentType": "application/zip",
-                      "path": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/test-results/search-Perform-search-and-check-the-data/trace.zip"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts",
-                    "column": 100,
-                    "line": 14
-                  }
-                }
-              ],
-              "status": "unexpected"
-            }
-          ],
-          "id": "a088064de9fe351eef5f-262e31a3071014ebb1e3",
-          "file": "search.spec.ts",
-          "line": 5,
-          "column": 5
-        }
-      ]
-    },
-    {
-      "title": "seed.spec.ts",
-      "file": "seed.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [
-        {
-          "title": "seed authenticated storage state",
-          "ok": false,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 3,
-                  "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 5616,
-                  "error": {
-                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Objects of Desire')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Objects of Desire')\u001b[22m\n",
-                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Objects of Desire')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Objects of Desire')\u001b[22m\n\n    at Login.open (/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts:14:100)\n    at /tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/seed.spec.ts:9:3",
-                    "location": {
-                      "file": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts",
-                      "column": 100,
-                      "line": 14
-                    },
-                    "snippet": "   at pages/login.ts:14\n\n  12 | export class Login {\n  13 |   constructor(private readonly page: Page) {}\n> 14 |   async open() { await this.page.goto('/'); await expect(this.page.getByText('Objects of Desire')).toBeVisible(); }\n     |                                                                                                    ^\n  15 |   async openLogin() { await this.page.getByRole('button', { name: 'Sign In' }).first().click(); await expect(this.page.getByText('Sign In').first()).toBeVisible(); }\n  16 |   async login() { await this.fill(data.validUser.email, data.validUser.password); await expect(this.page.locator('#profile-email')).toBeVisible(); }\n  17 |   async invalidLogin() { await this.fill(data.invalidUser.email, data.invalidUser.password); await expect(this.page.locator('#login-error')).toContainText(data.invalidLogin); }"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts",
-                        "column": 100,
-                        "line": 14
-                      },
-                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Objects of Desire')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Objects of Desire')\u001b[22m\n\n\n   at pages/login.ts:14\n\n  12 | export class Login {\n  13 |   constructor(private readonly page: Page) {}\n> 14 |   async open() { await this.page.goto('/'); await expect(this.page.getByText('Objects of Desire')).toBeVisible(); }\n     |                                                                                                    ^\n  15 |   async openLogin() { await this.page.getByRole('button', { name: 'Sign In' }).first().click(); await expect(this.page.getByText('Sign In').first()).toBeVisible(); }\n  16 |   async login() { await this.fill(data.validUser.email, data.validUser.password); await expect(this.page.locator('#profile-email')).toBeVisible(); }\n  17 |   async invalidLogin() { await this.fill(data.invalidUser.email, data.invalidUser.password); await expect(this.page.locator('#login-error')).toContainText(data.invalidLogin); }\n    at Login.open (/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts:14:100)\n    at /tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/seed.spec.ts:9:3"
-                    }
-                  ],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-08-11T11:25:42.860Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/test-results/seed-seed-authenticated-storage-state/test-failed-1.png"
-                    },
-                    {
-                      "name": "video",
-                      "contentType": "video/webm",
-                      "path": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/test-results/seed-seed-authenticated-storage-state/video.webm"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/test-results/seed-seed-authenticated-storage-state/error-context.md"
-                    },
-                    {
-                      "name": "trace",
-                      "contentType": "application/zip",
-                      "path": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/test-results/seed-seed-authenticated-storage-state/trace.zip"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "/tmp/maestro/77974912-0eca-4ddf-824f-b8bd16bc7719/app/tests/pages/login.ts",
-                    "column": 100,
-                    "line": 14
-                  }
-                }
-              ],
-              "status": "unexpected"
-            }
-          ],
-          "id": "11ceb7af692008938f3b-3aa0b0a7c173993d4277",
-          "file": "seed.spec.ts",
-          "line": 7,
-          "column": 5
-        },
-        {
-          "title": "seed coverage",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": -1,
-                  "parallelIndex": -1,
-                  "status": "skipped",
-                  "duration": 0,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-08-11T11:25:48.658Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "skipped"
-            }
-          ],
-          "id": "11ceb7af692008938f3b-6e09914e546212682c37",
-          "file": "seed.spec.ts",
-          "line": 15,
-          "column": 5
-        }
-      ]
     }
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-08-11T11:25:23.369Z",
-    "duration": 25300.447,
-    "expected": 0,
-    "skipped": 1,
-    "unexpected": 4,
-    "flaky": 0
+    "startTime": "2026-08-11T11:25:23.960Z",
+    "duration": 0,
+    "expected": 1,
+    "unexpected": 0,
+    "flaky": 0,
+    "skipped": 0
   }
 }
